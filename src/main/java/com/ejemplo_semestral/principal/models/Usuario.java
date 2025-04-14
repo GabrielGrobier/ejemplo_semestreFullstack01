@@ -1,10 +1,23 @@
 package com.ejemplo_semestral.principal.models;
 
 public class Usuario {
+    private int id;
     private String nombre;
     private String apellido;
     private String correo;
-
+    
+    public Usuario(int id, String nombre, String apellido, String correo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.correo = correo;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
     public String getNombre() {
         return nombre;
     }
@@ -23,13 +36,10 @@ public class Usuario {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-    public Usuario(String nombre, String apellido, String correo) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.correo = correo;
-    }
+
     
-    
+
+
 
 
 }
