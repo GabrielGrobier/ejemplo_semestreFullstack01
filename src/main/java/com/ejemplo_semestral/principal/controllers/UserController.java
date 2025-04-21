@@ -4,6 +4,8 @@ package com.ejemplo_semestral.principal.controllers;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,12 +14,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ejemplo_semestral.principal.models.Usuario;
+import com.ejemplo_semestral.principal.repository.UsuarioRepository;
 import com.ejemplo_semestral.principal.service.UserService;
 
 
 @RestController
 public class UserController {
+
+    private final UsuarioRepository usuarioRepository;
+    @Autowired
+    private UserService usuarioservice;
     UserService accionesUser = new UserService();
+
+    UserController(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @GetMapping("/hola")
     public String Holamundo(){
@@ -30,14 +41,19 @@ public class UserController {
         return accionesUser.obtenerUsuarios();
     }
     
-    @GetMapping("/usuarios/{id}")
-    public Usuario traerUsuario(@PathVariable int id){
-        return accionesUser.traerUsuario(id);
+    @GetMapping("/usuarios/{correo}")
+    public Usuario traerUsuario(@PathVariable String correo){
+        return accionesUser.traerUsuario(correo);
     }
 
+    //@PostMapping("/usuarios")
+    //public String agregarUsuario(@RequestBody Usuario usuario){
+    //    return accionesUser.agregaUsuario(usuario);
+    //}
     @PostMapping("/usuarios")
-    public String agregarUsuario(@RequestBody Usuario usuario){
-        return accionesUser.agregaUsuario(usuario);
+    public ResponseEntity<String> agregarUsuario (@RequestBody Usuario usuario){
+        return ResponseEntity.ok(usuarioservice.agregaUsuario(usuario));
+
     }
 
     @DeleteMapping("/usuarios/{id}")
