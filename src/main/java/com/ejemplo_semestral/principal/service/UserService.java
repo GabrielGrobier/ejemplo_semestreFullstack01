@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import com.ejemplo_semestral.principal.models.Usuario;
@@ -50,24 +51,25 @@ public class UserService {
 
     }
 
-    public String agregaUsuario(Usuario user){
-        try{
-            Boolean estado = usuarioRepository.existsByCorreo(user.getCorreo());
-            if (estado == true){
-                UsuarioEntity nuevoUsuario = new UsuarioEntity();
-                nuevoUsuario.setId(user.getId());
-                nuevoUsuario.setNombre(user.getNombre());
-                nuevoUsuario.setApellido(user.getApellido());
-                nuevoUsuario.setCorreo(user.getCorreo());
-                return "Usuario Agregado correctamente ";
-            }
-            return "El usuario ya existe ";
+public String agregaUsuario(Usuario user) {
+    try {
+        boolean estado = usuarioRepository.existsByCorreo(user.getCorreo());
+        if (!estado) {
+            UsuarioEntity nuevoUsuario = new UsuarioEntity();
+            nuevoUsuario.setNombre(user.getNombre());
+            nuevoUsuario.setApellido(user.getApellido());
+            nuevoUsuario.setCorreo(user.getCorreo());
+            usuarioRepository.save(nuevoUsuario);
+            return "Usuario agregado correctamente";
         }
-        catch(Exception e){
-            return " ha ocurrido un error ";
-        }
-
+        return "El usuario ya existe";
+    } catch (ObjectOptimisticLockingFailureException e) {
+        return "Error de concurrencia: " + e.getMessage();
+    } catch (Exception e) {
+        return "Ha ocurrido un error: " + e.getMessage();
     }
+}
+
 
     public String borrarUsuario (int id ){
         for (Usuario user : usuarios){
