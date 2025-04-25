@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ejemplo_semestral.principal.models.Usuario;
+import com.ejemplo_semestral.principal.models.dto.UsuarioDto;
 import com.ejemplo_semestral.principal.models.entity.UsuarioEntity;
 import com.ejemplo_semestral.principal.repository.UsuarioRepository;
 
@@ -79,6 +82,22 @@ public String agregaUsuario(Usuario user) {
             }
         }
         return null;
+    }
+
+    public ResponseEntity<UsuarioDto> obtenerUserDto( String correo){
+        Boolean estado = usuarioRepository.existsByCorreo(correo);
+        if (estado){
+            UsuarioEntity nuevoUsuario = usuarioRepository.findByCorreo(correo);
+            UsuarioDto usuarioResponse = new UsuarioDto(
+                nuevoUsuario.getNombre(),
+                nuevoUsuario.getCorreo()
+            );
+            return ResponseEntity.ok(usuarioResponse);
+
+
+        }
+        return ResponseEntity.notFound().build();
+
     }
 
 }

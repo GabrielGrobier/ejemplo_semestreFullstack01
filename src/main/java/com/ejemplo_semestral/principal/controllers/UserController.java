@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ejemplo_semestral.principal.models.Usuario;
+import com.ejemplo_semestral.principal.models.dto.UsuarioDto;
 import com.ejemplo_semestral.principal.repository.UsuarioRepository;
 import com.ejemplo_semestral.principal.service.UserService;
 
@@ -42,8 +43,8 @@ public class UserController {
     }
     
     @GetMapping("/usuarios/{correo}")
-    public Usuario traerUsuario(@PathVariable String correo){
-        return accionesUser.traerUsuario(correo);
+    public ResponseEntity<Usuario> traerUsuario(@PathVariable String correo){
+        return ResponseEntity.ok(usuarioservice.traerUsuario(correo));
     }
 
     //@PostMapping("/usuarios")
@@ -59,5 +60,11 @@ public class UserController {
     @DeleteMapping("/usuarios/{id}")
     public String borrarUsuario(@PathVariable int id ){
         return accionesUser.borrarUsuario(id);
+    }
+
+    @GetMapping("/usuariodto/{correo}")
+    public ResponseEntity<UsuarioDto> obtenerUserDto(@PathVariable String correo){
+        return usuarioservice.obtenerUserDto(correo);
+
     }
 }
