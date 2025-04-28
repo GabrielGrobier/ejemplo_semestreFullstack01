@@ -100,4 +100,25 @@ public String agregaUsuario(Usuario user) {
 
     }
 
+    public UsuarioDto obtenerUsuarioId(int id){
+        try{
+            Boolean estado = usuarioRepository.existsById(id);
+            if (estado){
+                UsuarioEntity nuevoUsuario = usuarioRepository.findById(id);
+                UsuarioDto responseUsuario = new UsuarioDto(
+                    nuevoUsuario.getNombre(),
+                    nuevoUsuario.getCorreo()
+                );
+                return responseUsuario;
+            }
+            return null ;
+        }
+        catch(Exception e){
+            
+            return null;
+        }
+
+
+    }
+
 }

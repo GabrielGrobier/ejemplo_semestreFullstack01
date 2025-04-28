@@ -10,6 +10,8 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
     UsuarioEntity findByCorreo(String correo);
     Boolean existsByCorreo(String correo);
     void deleteByCorreo(String correo);
+    UsuarioEntity findById(int id);
+    Boolean existsById(int id);
     //Boolean findByCorreoAndPassword(String correo , String password)
     // save 
     //findAll
