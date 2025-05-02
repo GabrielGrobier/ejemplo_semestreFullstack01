@@ -104,7 +104,7 @@ public String agregaUsuario(Usuario user) {
         try{
             Boolean estado = usuarioRepository.existsById(id);
             if (estado){
-                UsuarioEntity nuevoUsuario = usuarioRepository.findById(id);
+                UsuarioEntity nuevoUsuario = usuarioRepository.findUsuarioById(id);
                 UsuarioDto responseUsuario = new UsuarioDto(
                     nuevoUsuario.getNombre(),
                     nuevoUsuario.getCorreo()

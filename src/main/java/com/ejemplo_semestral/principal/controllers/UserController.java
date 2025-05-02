@@ -68,10 +68,11 @@ public class UserController {
 
     }
     @GetMapping("/usuariodtoid/{id}")
-    public ResponseEntity<UsuarioDto> obtenerUsuarioId(@PathVariable int id){
-       if (usuarioservice.obtenerUsuarioId(id)!= null){
-        ResponseEntity.ok(obtenerUsuarioId(id));
-       }
-       return ResponseEntity.notFound().build();
+    public ResponseEntity<UsuarioDto> obtenerUsuarioId(@PathVariable int id) {
+        UsuarioDto usuarioDto = usuarioservice.obtenerUsuarioId(id);
+        if (usuarioDto != null) {
+            return ResponseEntity.ok(usuarioDto); 
+        }
+        return ResponseEntity.notFound().build(); 
     }
 }
