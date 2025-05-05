@@ -18,6 +18,8 @@ import com.ejemplo_semestral.principal.models.dto.UsuarioDto;
 import com.ejemplo_semestral.principal.repository.UsuarioRepository;
 import com.ejemplo_semestral.principal.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 
 @RestController
 public class UserController {
@@ -30,7 +32,7 @@ public class UserController {
     UserController(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
-
+    @Operation(summary = "Este endpoint retorna un Hola ")
     @GetMapping("/hola")
     public String Holamundo(){
         return "Hola mundo desde spring ";
