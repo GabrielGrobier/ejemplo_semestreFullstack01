@@ -41,6 +41,6 @@ jobs:
                 key: ${{ secrets.PRIVATE_KEY }}
                 port: ${{ secrets.PORT }}
                 script: |
-                        cd /home/ubuntu/web-nueva/ejemplo_semestreFullstack01
+                        cd /home/ubuntu/web-nueva/
                         sudo docker compose down
                         sudo docker compose up -d --build
