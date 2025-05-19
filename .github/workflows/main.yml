@@ -6,6 +6,7 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+
         steps:
 
             - name: Comprobar codigo repositorio
@@ -24,7 +25,7 @@ jobs:
             - name: Sincronizar archivos con el servidor
               uses: burnett01/rsync-deployments@7.0.2
               with:
-                switches: "-avz --delete"  # Opciones de rsync
+                switches: "-avz --delete"  # Opciones de rsync ###
                 path: "./"  # Directorio de origen (los archivos del repositorio)
                 remote_host: ${{ secrets.IP_SERVER }}  # Dirección IP del servidor
                 remote_user: ${{ secrets.USERNAME }}  # Usuario SSH en el servidor
