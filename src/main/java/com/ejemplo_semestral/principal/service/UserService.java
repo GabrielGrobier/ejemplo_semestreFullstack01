@@ -1,13 +1,13 @@
 package com.ejemplo_semestral.principal.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ejemplo_semestral.principal.models.Usuario;
 import com.ejemplo_semestral.principal.models.dto.UsuarioDto;
@@ -16,109 +16,123 @@ import com.ejemplo_semestral.principal.repository.UsuarioRepository;
 
 @Service
 public class UserService {
-    // conectando el service con el repository correspondiente 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    private final List<Usuario> usuarios = new ArrayList<>();
-
-    public UserService(){
-        usuarios.add(new Usuario(1,"Pedro", "gonzalez", "pedro@gmail.com"));
+    // CREATE
+    public String agregarUsuario(Usuario user) {
+        try {
+            boolean existe = usuarioRepository.existsByCorreo(user.getCorreo());
+            if (!existe) {
+                UsuarioEntity nuevoUsuario = new UsuarioEntity();
+                nuevoUsuario.setNombre(user.getNombre());
+                nuevoUsuario.setApellido(user.getApellido());
+                nuevoUsuario.setCorreo(user.getCorreo());
+                usuarioRepository.save(nuevoUsuario);
+                return "Usuario agregado correctamente";
+            }
+            return "El usuario ya existe";
+        } catch (ObjectOptimisticLockingFailureException e) {
+            return "Error de concurrencia: " + e.getMessage();
+        } catch (Exception e) {
+            return "Ha ocurrido un error: " + e.getMessage();
+        }
     }
 
-    public List<Usuario> obtenerUsuarios(){
-        return usuarios;
+    // READ ALL
+    public List<Usuario> obtenerUsuarios() {
+        List<UsuarioEntity> entidades = usuarioRepository.findAll();
+        return entidades.stream()
+                .map(u -> new Usuario(u.getId(), u.getNombre(), u.getApellido(), u.getCorreo()))
+                .collect(Collectors.toList());
     }
 
-    public Usuario traerUsuario(String correo){
-        try{
+    // READ ONE by correo
+    public Usuario traerUsuario(String correo) {
+        try {
             UsuarioEntity usuario = usuarioRepository.findByCorreo(correo);
-            if (usuario!=null){
-                Usuario usuarioNuevo = new Usuario(
-                    usuario.getId(),
-                    usuario.getNombre(),
-                    usuario.getApellido(),
-                    usuario.getCorreo()
+            if (usuario != null) {
+                return new Usuario(
+                        usuario.getId(),
+                        usuario.getNombre(),
+                        usuario.getApellido(),
+                        usuario.getCorreo()
                 );
-                return usuarioNuevo;
-
             }
             return null;
-
-
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
-        
-
     }
 
-public String agregaUsuario(Usuario user) {
-    try {
-        boolean estado = usuarioRepository.existsByCorreo(user.getCorreo());
-        if (!estado) {
-            UsuarioEntity nuevoUsuario = new UsuarioEntity();
-            nuevoUsuario.setNombre(user.getNombre());
-            nuevoUsuario.setApellido(user.getApellido());
-            nuevoUsuario.setCorreo(user.getCorreo());
-            usuarioRepository.save(nuevoUsuario);
-            return "Usuario agregado correctamente";
-        }
-        return "El usuario ya existe";
-    } catch (ObjectOptimisticLockingFailureException e) {
-        return "Error de concurrencia: " + e.getMessage();
-    } catch (Exception e) {
-        return "Ha ocurrido un error: " + e.getMessage();
-    }
-}
-
-
-    public String borrarUsuario (int id ){
-        for (Usuario user : usuarios){
-            if(user.getId()== id ){
-                usuarios.remove(user);
-                return "usuario borrado correctamente ";
+    // READ ONE by id
+    public UsuarioDto obtenerUsuarioId(int id) {
+        try {
+            Optional<UsuarioEntity> usuarioOpt = usuarioRepository.findById(id);
+            if (usuarioOpt.isPresent()) {
+                UsuarioEntity usuario = usuarioOpt.get();
+                return new UsuarioDto(usuario.getNombre(), usuario.getCorreo());
             }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
-    public ResponseEntity<UsuarioDto> obtenerUserDto( String correo){
-        Boolean estado = usuarioRepository.existsByCorreo(correo);
-        if (estado){
-            UsuarioEntity nuevoUsuario = usuarioRepository.findByCorreo(correo);
+    // UPDATE
+    public String actualizarUsuario(int id, Usuario user) {
+        try {
+            Optional<UsuarioEntity> usuarioOpt = usuarioRepository.findById(id);
+            if (usuarioOpt.isPresent()) {
+                UsuarioEntity usuario = usuarioOpt.get();
+                usuario.setNombre(user.getNombre());
+                usuario.setApellido(user.getApellido());
+                usuario.setCorreo(user.getCorreo());
+                usuarioRepository.save(usuario);
+                return "Usuario actualizado correctamente";
+            }
+            return "Usuario no encontrado";
+        } catch (Exception e) {
+            return "Error al actualizar usuario: " + e.getMessage();
+        }
+    }
+
+    // DELETE by id
+    public String borrarUsuario(int id) {
+        try {
+            if (usuarioRepository.existsById(id)) {
+                usuarioRepository.deleteById(id);
+                return "Usuario borrado correctamente";
+            }
+            return "Usuario no encontrado";
+        } catch (Exception e) {
+            return "Error al borrar usuario: " + e.getMessage();
+        }
+    }
+
+    // DELETE by correo
+    public String borrarUsuarioPorCorreo(String correo) {
+        try {
+            if (usuarioRepository.existsByCorreo(correo)) {
+                usuarioRepository.deleteByCorreo(correo);
+                return "Usuario borrado correctamente";
+            }
+            return "Usuario no encontrado";
+        } catch (Exception e) {
+            return "Error al borrar usuario: " + e.getMessage();
+        }
+    }
+
+    // Obtener DTO por correo
+    public ResponseEntity<UsuarioDto> obtenerUserDto(String correo) {
+        UsuarioEntity usuario = usuarioRepository.findByCorreo(correo);
+        if (usuario != null) {
             UsuarioDto usuarioResponse = new UsuarioDto(
-                nuevoUsuario.getNombre(),
-                nuevoUsuario.getCorreo()
+                    usuario.getNombre(),
+                    usuario.getCorreo()
             );
             return ResponseEntity.ok(usuarioResponse);
-
-
         }
         return ResponseEntity.notFound().build();
-
     }
-
-    public UsuarioDto obtenerUsuarioId(int id){
-        try{
-            Boolean estado = usuarioRepository.existsById(id);
-            if (estado){
-                UsuarioEntity nuevoUsuario = usuarioRepository.findUsuarioById(id);
-                UsuarioDto responseUsuario = new UsuarioDto(
-                    nuevoUsuario.getNombre(),
-                    nuevoUsuario.getCorreo()
-                );
-                return responseUsuario;
-            }
-            return null ;
-        }
-        catch(Exception e){
-            
-            return null;
-        }
-
-
-    }
-
 }
