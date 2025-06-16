@@ -11,7 +11,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI(){
         return new OpenAPI().info(new Info()
-        .title("APi Micro servicio Usuarios ")
+        .title("Api Micro Servicios seccion 009 por Gabriel  ")
         .version("1.0")
         .description("Este es el micro servicio de Usuarios "));
     }
