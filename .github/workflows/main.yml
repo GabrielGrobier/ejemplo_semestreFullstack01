@@ -25,7 +25,7 @@ jobs:
             - name: Sincronizar archivos con el servidor
               uses: burnett01/rsync-deployments@7.0.2
               with:
-                switches: "-avz --delete"  # Opciones de rsync
+                switches: "-avz --delete 'ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${{ secrets.PRIVATE_KEY }} -p ${{ secrets.PORT }}'"  # Opciones de rsync
                 path: "./"  # Directorio de origen (los archivos del repositorio)
                 remote_host: ${{ secrets.IP_SERVER }}  # Dirección IP del servidor
                 remote_user: ${{ secrets.USERNAME }}  # Usuario SSH en el servidor
