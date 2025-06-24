@@ -22,27 +22,18 @@ jobs:
                     script: |
                             mkdir -p /home/ubuntu/fs1001
 
-            - name: Actualizar rsync  
-              uses: appleboy/ssh-action@v1
-              with:
-                    host: ${{ secrets.IP_SERVER }}
-                    username: ${{ secrets.USERNAME }}
-                    key: ${{ secrets.PRIVATE_KEY }}
-                    port: ${{ secrets.PORT }}
-                    script: |
-                            rsync --version
-                            sudo apt-get update && sudo apt-get install -y rsync
 
             - name: Sincronizar archivos con el servidor
               uses: burnett01/rsync-deployments@7.0.2
               with:
-                switches: "-avz --delete 'ssh -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${{ secrets.PRIVATE_KEY }} -p ${{ secrets.PORT }}'"  # Opciones de rsync
-                path: "./"  # Directorio de origen (los archivos del repositorio)
-                remote_host: ${{ secrets.IP_SERVER }}  # Dirección IP del servidor
-                remote_user: ${{ secrets.USERNAME }}  # Usuario SSH en el servidor
-                remote_path: "/home/ubuntu/fs1001/"  # Ruta de destino en el servidor
-                remote_key: ${{ secrets.PRIVATE_KEY }}  # Clave SSH para autenticar
-                remote_port: ${{ secrets.PORT }}  # Puerto SSH (si es distinto del predeterminado 22)
+                switches: "-avz --delete -e 'ssh -i ${{ secrets.PRIVATE_KEY }} -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no -o LogLevel=ERROR'"
+                path: "./"
+                remote_host: ${{ secrets.IP_SERVER }}
+                remote_user: ${{ secrets.USERNAME }}
+                remote_path: "/home/ubuntu/fs1001/"
+                remote_key: ${{ secrets.PRIVATE_KEY }}
+                remote_port: ${{ secrets.PORT }}
+
 
 
             - name: Levantar docker-compose 
