@@ -4,6 +4,7 @@ on:
         branches:
           - main
 
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -27,7 +28,7 @@ jobs:
               uses: burnett01/rsync-deployments@7.0.2
               with:
                 switches: "-avz --delete -e 'ssh -i ${{ secrets.PRIVATE_KEY }} -p ${{ secrets.PORT }} -o StrictHostKeyChecking=no -o LogLevel=ERROR'"
-                path: "./"
+                path: "./" # es la carpeta local del proyecto 
                 remote_host: ${{ secrets.IP_SERVER }}
                 remote_user: ${{ secrets.USERNAME }}
                 remote_path: "/home/ubuntu/fs1001/"
