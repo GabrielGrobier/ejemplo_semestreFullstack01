@@ -1,8 +1,10 @@
 name: maquinaJava
 on:
-    push:
-        branches:
-            - main
+    workflow_run:
+        types: [completed]
+        workflows: ["test-java"]
+        branches: [main]
+
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -19,7 +21,7 @@ jobs:
                     key: ${{ secrets.PRIVATE_KEY }}
                     port: ${{ secrets.PORT }}
                     script: |
-                            mkdir -p /home/ubuntu/web-nueva
+                            mkdir -p /home/ubuntu/fs1001
 
             - name: Sincronizar archivos con el servidor
               uses: burnett01/rsync-deployments@7.0.2
@@ -28,7 +30,7 @@ jobs:
                 path: "./"  # Directorio de origen (los archivos del repositorio)
                 remote_host: ${{ secrets.IP_SERVER }}  # Dirección IP del servidor
                 remote_user: ${{ secrets.USERNAME }}  # Usuario SSH en el servidor
-                remote_path: "/home/ubuntu/web-nueva/"  # Ruta de destino en el servidor
+                remote_path: "/home/ubuntu/fs1001/"  # Ruta de destino en el servidor
                 remote_key: ${{ secrets.PRIVATE_KEY }}  # Clave SSH para autenticar
                 remote_port: ${{ secrets.PORT }}  # Puerto SSH (si es distinto del predeterminado 22)
 
@@ -41,6 +43,6 @@ jobs:
                 key: ${{ secrets.PRIVATE_KEY }}
                 port: ${{ secrets.PORT }}
                 script: |
-                        cd /home/ubuntu/web-nueva/
+                        cd /home/ubuntu/fs1001/ejmploJava
                         sudo docker compose down
                         sudo docker compose up -d --build
