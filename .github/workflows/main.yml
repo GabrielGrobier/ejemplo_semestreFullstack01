@@ -1,9 +1,8 @@
 name: maquinaJava
 on:
-    workflow_run:
-        types: [completed]
-        workflows: ["test-java"]
-        branches: [main]
+    push:
+        branches:
+          - main
 
 jobs:
     build:
@@ -43,6 +42,6 @@ jobs:
                 key: ${{ secrets.PRIVATE_KEY }}
                 port: ${{ secrets.PORT }}
                 script: |
-                        cd /home/ubuntu/fs1001/ejmploJava
+                        cd /home/ubuntu/fs1001/
                         sudo docker compose down
                         sudo docker compose up -d --build
