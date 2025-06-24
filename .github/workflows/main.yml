@@ -21,16 +21,17 @@ jobs:
                     script: |
                             mkdir -p /home/ubuntu/web-nueva
 
-            - name: Sincronizar archivos con el servidor
-              uses: burnett01/rsync-deployments@7.0.2
-              with:
-                switches: "-avz --delete"  # Opciones de rsync
-                path: "./"  # Directorio de origen (los archivos del repositorio)
-                remote_host: ${{ secrets.IP_SERVER }}  # Dirección IP del servidor
-                remote_user: ${{ secrets.USERNAME }}  # Usuario SSH en el servidor
-                remote_path: "/home/ubuntu/web-nueva/"  # Ruta de destino en el servidor
-                remote_key: ${{ secrets.PRIVATE_KEY }}  # Clave SSH para autenticar
-                remote_port: ${{ secrets.PORT }}  # Puerto SSH (si es distinto del predeterminado 22)
+- name: Sincronizar archivos con el servidor
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: "-avz --delete"
+          path: "./"
+          remote_host: ${{ secrets.IP_SERVER }}
+          remote_user: ${{ secrets.USERNAME }}
+          remote_path: "/home/ubuntu/app/"
+          remote_key: ${{ secrets.PRIVATE_KEY }}
+          remote_port: ${{ secrets.PORT }}
+
 
 
             - name: Levantar docker-compose 
